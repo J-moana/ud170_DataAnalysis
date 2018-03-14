@@ -109,6 +109,39 @@ nontest_project_submissions = remove_is_udacity(project_submissions)
 print(len(nontest_enrollments),len(nontest_daily_engagement),len(nontest_project_submissions))
 
 
+# paid_students
+paid_students = {}
+for enroll in nontest_enrollments:
+    if (enroll['days_to_cancel'] > 7) or (not enroll['days_to_cancel']):
+        account_key = enroll['account_key']
+        enrollment_date = enroll['join_date']
+
+        if (account_key not in paid_students) or (enrollment_date > paid_students[account_key]):
+            paid_students[account_key] = enrollment_date
+
+print(len(paid_students))
+
+def within_one_week(join_date,engagement_date):
+    time_delta = engagement_date - join_date
+    return time_delta.days <7
+
+def remove_free_trial_cancels(data):
+    new_data = []
+    for data_point in data:
+        if data_point['account_key'] in paid_students:
+            new_data.append(data_point)
+    return new_data
+
+paid_enrollments = remove_free_trial_cancels(nontest_enrollments)
+paid_engagement = remove_free_trial_cancels(nontest_daily_engagement)
+paid_submissions = remove_free_trial_cancels(nontest_project_submissions)
+
+print(len(paid_enrollments),len(paid_engagement),len(paid_submissions))
+
+
+
+
+
 
 
 
