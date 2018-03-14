@@ -85,8 +85,31 @@ for enroll in enrollments:
     days = enroll['days_to_cancel']
     if (student not in k) and (days != 0):
         num_problem_student += 1
+        print(enroll)
 
 print(num_problem_student)
+
+udacity_test_accounts = set()
+for enroll in enrollments:
+    if enroll['is_udacity']:
+        udacity_test_accounts.add(enroll['account_key'])
+print('# of test account:', len(udacity_test_accounts))
+
+def remove_is_udacity(data):
+    non_data = []
+    for data_point in data:
+        if data_point['account_key'] not in udacity_test_accounts:
+            non_data.append(data_point)
+    return non_data
+
+nontest_enrollments = remove_is_udacity(enrollments)
+nontest_daily_engagement = remove_is_udacity(daily_engagement)
+nontest_project_submissions = remove_is_udacity(project_submissions)
+
+print(len(nontest_enrollments),len(nontest_daily_engagement),len(nontest_project_submissions))
+
+
+
 
 
 
