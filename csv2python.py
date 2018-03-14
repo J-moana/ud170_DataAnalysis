@@ -112,7 +112,7 @@ print(len(nontest_enrollments),len(nontest_daily_engagement),len(nontest_project
 # paid_students
 paid_students = {}
 for enroll in nontest_enrollments:
-    if (enroll['days_to_cancel'] > 7) or (not enroll['days_to_cancel']):
+    if (enroll['days_to_cancel'] > 7) or (enroll['days_to_cancel'] == None):
         account_key = enroll['account_key']
         enrollment_date = enroll['join_date']
 
@@ -136,7 +136,45 @@ paid_enrollments = remove_free_trial_cancels(nontest_enrollments)
 paid_engagement = remove_free_trial_cancels(nontest_daily_engagement)
 paid_submissions = remove_free_trial_cancels(nontest_project_submissions)
 
+# paid_within_oneweek_engagement = within_one_week(paid_engagement)
 print(len(paid_enrollments),len(paid_engagement),len(paid_submissions))
+print(paid_engagement[0])
+
+paid_within_oneweek_engagement = []
+for engagement in paid_engagement:
+    engagement_date = engagement['utc_date']
+    join_date = paid_students[engagement['account_key']]
+    if within_one_week(join_date,engagement_date):
+        paid_within_oneweek_engagement.append(engagement)
+
+print(len(paid_within_oneweek_engagement))
+
+
+# exploring students' engagement
+
+from collections import defaultdict
+
+engagement_by_account = defaultdict(list)
+for engagement in paid_within_oneweek_engagement:
+    account_key = engagement['account_key']
+    engagement_by_account[account_key].append(engagement)
+
+total_minutes_by_account = {}
+for account_key, engagement_for_student in engagement_by_account.items():
+    total_minutes = 0
+    for engagement in engagement_for_student:
+        total_minutes += engagement['total_minutes_visited']
+    total_minutes_by_account[account_key] = total_minutes
+
+import numpy as np
+total_minutes = total_minutes_by_account.values()
+print('Mean:', np.mean(total_minutes))
+print ('Standard deviation:', np.std(total_minutes))
+print ('Minimum:', np.min(total_minutes))
+print ('Maximum:', np.max(total_minutes))
+
+
+
 
 
 
