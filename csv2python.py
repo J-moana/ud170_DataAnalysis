@@ -123,7 +123,7 @@ print(len(paid_students))
 
 def within_one_week(join_date,engagement_date):
     time_delta = engagement_date - join_date
-    return time_delta.days <7 and time_delta.days >= 0 
+    return time_delta.days <7 and time_delta.days >= 0
 
 def remove_free_trial_cancels(data):
     new_data = []
@@ -174,11 +174,26 @@ print ('Standard deviation:', np.std(total_minutes))
 print ('Minimum:', np.min(total_minutes))
 print ('Maximum:', np.max(total_minutes))
 
-print(max(total_minutes_by_account.items(), key = lambda k:k[1]))
+# # check the maxinum min. data
+# print(max(total_minutes_by_account.items(), key = lambda k:k[1]))
+# max_student = (max(total_minutes_by_account.items(), key = lambda k:k[1]))
+#
+# for t in paid_within_oneweek_engagement:
+#     if t['account_key'] == max_student[0]:
+#         print(t)
 
-for t in paid_within_oneweek_engagement:
-    if t['account_key'] == '108':
-        print(t)
+total_completed_by_account = {}
+for account_key, engagement_for_student in engagement_by_account.items():
+    total_complete = 0
+    for engatement in engagement_for_student:
+        total_complete += engatement['lessons_completed']
+    total_completed_by_account[account_key] = total_complete
+
+total_complete = total_completed_by_account.values()
+print('Mean:', np.mean(total_complete))
+print ('Standard deviation:', np.std(total_complete))
+print ('Minimum:', np.min(total_complete))
+print ('Maximum:', np.max(total_complete))
 
 
 
