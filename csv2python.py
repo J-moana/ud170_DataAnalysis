@@ -155,10 +155,15 @@ print(len(paid_within_oneweek_engagement))
 
 from collections import defaultdict
 
-engagement_by_account = defaultdict(list)
-for engagement in paid_within_oneweek_engagement:
-    account_key = engagement['account_key']
-    engagement_by_account[account_key].append(engagement)
+def engage_by_account(data):
+    engagement_by_account = defaultdict(list)
+    for engagement in data:
+        account_key = engagement['account_key']
+        engagement_by_account[account_key].append(engagement)
+    return engagement_by_account
+
+engagement_by_account = engate_by_account(paid_within_oneweek_engagement)
+
 
 total_minutes_by_account = {}
 for account_key, engagement_for_student in engagement_by_account.items():
