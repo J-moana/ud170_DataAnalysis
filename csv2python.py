@@ -40,7 +40,7 @@ for enroll in enrollments:
     enroll['is_udacity'] = (enroll['is_udacity'] == 'True')
     enroll['join_date'] = parse_date(enroll['join_date'])
 
-print(enrollments[0])
+# print(enrollments[0])
 for engagement in daily_engagement:
     engagement['lessons_completed'] = int(float(engagement['lessons_completed']))
     engagement['num_courses_visited'] = int(float(engagement['num_courses_visited']))
@@ -63,10 +63,10 @@ def find_unique_student(ddata):
         uniqq.add(dd['account_key'])
     return uniqq
 
-print(len(enrollments),len(find_unique_student(enrollments)))
-print(len(daily_engagement),len(find_unique_student(daily_engagement)))
-print(len(project_submissions),len(find_unique_student(project_submissions)))
-print(daily_engagement[0]['account_key'])
+# print(len(enrollments),len(find_unique_student(enrollments)))
+# print(len(daily_engagement),len(find_unique_student(daily_engagement)))
+# print(len(project_submissions),len(find_unique_student(project_submissions)))
+# print(daily_engagement[0]['account_key'])
 
 # find data problem
 k = find_unique_student(daily_engagement)
@@ -74,7 +74,7 @@ for enroll in enrollments:
     # k.add(enroll['account_key'])
     # if len(k) != kn:
     if enroll['account_key'] not in k:
-        print(enroll)
+        # print(enroll)
         break
         # k = find_unique_student(daily_engagement)
         # rr += 1
@@ -119,7 +119,7 @@ for enroll in nontest_enrollments:
         if (account_key not in paid_students) or (enrollment_date > paid_students[account_key]):
             paid_students[account_key] = enrollment_date
 
-print(len(paid_students))
+# print(len(paid_students))
 
 def within_one_week(join_date,engagement_date):
     time_delta = engagement_date - join_date
@@ -135,10 +135,11 @@ def remove_free_trial_cancels(data):
 paid_enrollments = remove_free_trial_cancels(nontest_enrollments)
 paid_engagement = remove_free_trial_cancels(nontest_daily_engagement)
 paid_submissions = remove_free_trial_cancels(nontest_project_submissions)
-
+print(nontest_project_submissions[0])
+print(paid_submissions[0])
 # paid_within_oneweek_engagement = within_one_week(paid_engagement)
-print(len(paid_enrollments),len(paid_engagement),len(paid_submissions))
-print(paid_engagement[0])
+# print(len(paid_enrollments),len(paid_engagement),len(paid_submissions))
+# print(paid_engagement[0])
 
 paid_within_oneweek_engagement = []
 for engagement in paid_engagement:
@@ -147,7 +148,7 @@ for engagement in paid_engagement:
     if within_one_week(join_date,engagement_date):
         paid_within_oneweek_engagement.append(engagement)
 
-print(len(paid_within_oneweek_engagement))
+# print(len(paid_within_oneweek_engagement))
 
 
 # exploring students' engagement
@@ -162,49 +163,70 @@ def engage_by_account(data):
         engagement_by_account[account_key].append(engagement)
     return engagement_by_account
 
-engagement_by_account = engate_by_account(paid_within_oneweek_engagement)
+engagement_by_account = engage_by_account(paid_within_oneweek_engagement)
 
-
-total_minutes_by_account = {}
-for account_key, engagement_for_student in engagement_by_account.items():
-    total_minutes = 0
-    for engagement in engagement_for_student:
-        total_minutes += engagement['total_minutes_visited']
-    total_minutes_by_account[account_key] = total_minutes
+def sum_by_account(data,key):
+    total_sum_by_account = {}
+    for account_key, engagement_for_student in data.items():
+        total_sum = 0
+        for engagement in engagement_for_student:
+            total_sum += engagement[key]
+        total_sum_by_account[account_key] = total_sum
+    return total_sum_by_account
 
 import numpy as np
+def descript_data(data):
+    print('Mean:', np.mean(data))
+    print ('Standard deviation:', np.std(data))
+    print ('Minimum:', np.min(data))
+    print ('Maximum:', np.max(data))
+
+total_minutes_by_account = sum_by_account(engagement_by_account,'total_minutes_visited')
 total_minutes = total_minutes_by_account.values()
-print('Mean:', np.mean(total_minutes))
-print ('Standard deviation:', np.std(total_minutes))
-print ('Minimum:', np.min(total_minutes))
-print ('Maximum:', np.max(total_minutes))
+descript_data(total_minutes)
 
-# # check the maxinum min. data
-# print(max(total_minutes_by_account.items(), key = lambda k:k[1]))
-# max_student = (max(total_minutes_by_account.items(), key = lambda k:k[1]))
-#
-# for t in paid_within_oneweek_engagement:
-#     if t['account_key'] == max_student[0]:
-#         print(t)
+total_lessons_by_account = sum_by_account(engagement_by_account,'lessons_completed')
+total_lessons = total_lessons_by_account.values()
+descript_data(total_lessons)
+# total_minutes_by_account.values()
 
-total_completed_by_account = {}
-for account_key, engagement_for_student in engagement_by_account.items():
-    total_complete = 0
-    for engatement in engagement_for_student:
-        total_complete += engatement['lessons_completed']
-    total_completed_by_account[account_key] = total_complete
+def has_vistied_by_account(data,key):
+    total_vistit_by_account = {}
+    for account_key, engagement_for_student in data.items():
+        total_sum = 0
+        for engagement in engagement_for_student:
+            total_sum += (engagement[key]>=1)
+        total_vistit_by_account[account_key] = total_sum
+    return total_vistit_by_account
 
-total_complete = total_completed_by_account.values()
-print('Mean:', np.mean(total_complete))
-print ('Standard deviation:', np.std(total_complete))
-print ('Minimum:', np.min(total_complete))
-print ('Maximum:', np.max(total_complete))
+
+total_vistit_by_account = has_vistied_by_account(engagement_by_account,'num_courses_visited')
+descript_data(total_vistit_by_account.values())
 
 
 
+# split data into pass or not
+subway_project_lesson_keys = ['746169184', '3176718735']
+pass_subway_project = set()
 
+for submission in paid_submissions:
+    project = submission['lesson_key']
+    rating = submission['assigned_rating']
 
+    if project in subway_project_lesson_keys and \
+            (rating == 'PASSED' or rating == 'DISTINCTION'):
+        pass_subway_project.add(submission['account_key'])
 
+print(len(pass_subway_project))
 
-#
-# print(len(set(project_submissions['account_key'])))
+passing_engagemnet = []
+non_passing_engagement = []
+
+for engagement in paid_within_oneweek_engagement:
+    if engagement['account_key'] in pass_subway_project:
+        passing_engagemnet.append(engagement)
+    else:
+        non_passing_engagement.append(engagement)
+
+print(len(passing_engagemnet))
+print(len(non_passing_engagement))
