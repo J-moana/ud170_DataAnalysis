@@ -156,14 +156,14 @@ for engagement in paid_engagement:
 
 from collections import defaultdict
 
-def engage_by_account(data):
+def group_by_account(data):
     engagement_by_account = defaultdict(list)
     for engagement in data:
         account_key = engagement['account_key']
         engagement_by_account[account_key].append(engagement)
     return engagement_by_account
 
-engagement_by_account = engage_by_account(paid_within_oneweek_engagement)
+engagement_by_account = group_by_account(paid_within_oneweek_engagement)
 
 def sum_by_account(data,key):
     total_sum_by_account = {}
@@ -219,14 +219,23 @@ for submission in paid_submissions:
 
 print(len(pass_subway_project))
 
-passing_engagemnet = []
+passing_engagement = []
 non_passing_engagement = []
 
 for engagement in paid_within_oneweek_engagement:
     if engagement['account_key'] in pass_subway_project:
-        passing_engagemnet.append(engagement)
+        passing_engagement.append(engagement)
     else:
         non_passing_engagement.append(engagement)
 
-print(passing_engagemnet[0])
+
+passing_engagemnet_by_account =group_by_account(passing_engagement)
+non_passing_engagemnet_by_account =group_by_account(non_passing_engagement)
+total_minutes_by_passing_engagemnet = sum_by_account(passing_engagemnet_by_account,'total_minutes_visited')
+total_minutes_by_non_passing_engagemnet = sum_by_account(non_passing_engagemnet_by_account,'total_minutes_visited')
+
+
+print(descript_data(total_minutes_by_passing_engagemnet.values()))
+print(descript_data(total_minutes_by_non_passing_engagemnet.values()))
+
 # print(len(non_passing_engagement))
