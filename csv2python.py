@@ -228,5 +228,5 @@ for engagement in paid_within_oneweek_engagement:
     else:
         non_passing_engagement.append(engagement)
 
-print(len(passing_engagemnet))
-print(len(non_passing_engagement))
+print(passing_engagemnet[0])
+# print(len(non_passing_engagement))
