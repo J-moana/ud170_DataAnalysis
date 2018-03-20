@@ -239,7 +239,11 @@ print(descript_data(total_minutes_by_passing_engagemnet.values()))
 print(descript_data(total_minutes_by_non_passing_engagemnet.values()))
 
 import matplotlib.pyplot as plt
-plt.hist(total_minutes_by_passing_engagemnet.values())
-show.plt()
+
+bins = np.linspace(0,4000,40)
+plt.hist(total_minutes_by_passing_engagemnet.values(),bins, alpha=0.5,label ='passing')
+plt.hist(total_minutes_by_non_passing_engagemnet.values(),bins, alpha=0.5,label ='non-passing')
+plt.legend(loc = 'upper right')
+plt.show()
 
 # print(len(non_passing_engagement))
