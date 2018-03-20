@@ -123,7 +123,7 @@ print(len(paid_students))
 
 def within_one_week(join_date,engagement_date):
     time_delta = engagement_date - join_date
-    return time_delta.days <7
+    return time_delta.days <7 and time_delta.days >= 0 
 
 def remove_free_trial_cancels(data):
     new_data = []
@@ -151,6 +151,7 @@ print(len(paid_within_oneweek_engagement))
 
 
 # exploring students' engagement
+# dictionary!!
 
 from collections import defaultdict
 
@@ -173,12 +174,11 @@ print ('Standard deviation:', np.std(total_minutes))
 print ('Minimum:', np.min(total_minutes))
 print ('Maximum:', np.max(total_minutes))
 
+print(max(total_minutes_by_account.items(), key = lambda k:k[1]))
 
-
-
-
-
-
+for t in paid_within_oneweek_engagement:
+    if t['account_key'] == '108':
+        print(t)
 
 
 
